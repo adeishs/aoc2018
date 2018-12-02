@@ -36,6 +36,5 @@ while let boxId = readLine() {
   boxIds.append(boxId)
 }
 
-let boxCount = boxIds.count
 let str = getCorrectBoxCommonCharStr(boxIds)
 print("\(str)")

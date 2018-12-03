@@ -21,7 +21,13 @@ var patches = Array(repeating: Array(repeating: [Int]([]), count: squareWidth),
 var claimIds: [Int] = []
 for claim in claims {
   var claimEls = claim.components(separatedBy: " @ ")
+
+#if swift(>=4.0)
   claimEls[0].removeFirst(1)
+#elseif swift(>=3.0)
+  claimEls[0] = String(claimEls[0].characters.dropFirst())
+#endif
+
   let claimId = Int(claimEls[0]) ?? 0
   claimIds.append(claimId)
   let claimSpec = claimEls[1]

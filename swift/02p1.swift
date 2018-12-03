@@ -3,37 +3,39 @@ while let boxId = readLine() {
   boxIds.append(boxId)
 }
 
-var numOfTwos = 0
-var numOfThrees = 0
+let targetFreqs = [2, 3]
+var count: [Int: Int] = [:]
+for f in targetFreqs { count[f] = 0 }
 
 for boxId in boxIds {
   var charFreqs: [Character: Int] = [:]
-  for i in boxId.characters.indices {
+
+#if swift(>=4.0)
+  let indices = boxId.indices
+#elseif swift(>=3.0)
+  let indices = boxId.characters.indices
+#endif
+
+  for i in indices {
     let c: Character = boxId[i]
-    if let f = charFreqs[c] {
-      charFreqs[c]! += 1
-    } else {
-      charFreqs[c] = 1
-    }
+    charFreqs[c] = (charFreqs[c] ?? 0) + 1
   }
 
-  var twoFound = false
-  var threeFound = false
-  for (key, val) in charFreqs {
-    if val == 2 {
-      twoFound = true
-    } else if val == 3 {
-      threeFound = true
-    }
+  var found: [Int: Bool] = [:]
+  for f in targetFreqs { found[f] = false }
+  for (_, val) in charFreqs {
+    if targetFreqs.contains(val) { found[val] = true }
+
+    var allFound = true
+    for (_, val) in found { allFound = allFound && val }
+    if allFound { break }
   }
 
-  if twoFound {
-    numOfTwos += 1
-  }
-  if threeFound {
-    numOfThrees += 1
+  for (key, val) in found {
+    if val { count[key] = (count[key] ?? 0) + 1 }
   }
 }
 
-let checksum = numOfTwos * numOfThrees
+var checksum = 1
+for (_, val) in count { checksum *= val }
 print("\(checksum)")

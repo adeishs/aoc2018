@@ -21,10 +21,8 @@ func getCommonCharStr(boxId1: String, boxId2: String) -> String {
 
 func getCorrectBoxCommonCharStr(boxIds: [String]) -> String {
   let boxCount = boxIds.count
-  let jMax = boxCount - 1
-  let iMax = jMax - 1
-  for i in (0 ... iMax) {
-    for j in (i + 1 ... jMax) {
+  for i in (0 ..< boxCount - 1) {
+    for j in (i + 1 ..< boxCount) {
 
       let str = getCommonCharStr(boxId1: boxIds[i], boxId2: boxIds[j])
       if str != "" { return str }

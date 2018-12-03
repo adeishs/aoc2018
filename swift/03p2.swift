@@ -1,16 +1,15 @@
 import Foundation
 
-func getSingleClaimId (patches: [[[Int]]], claimIds: inout [Int]) -> Int {
+func getSingleClaimId (patches: [[[Int]]], claimIds: [Int]) -> Int {
+  var ids = Set(claimIds)
   for row in patches {
     for c in row {
       if c.count > 1 {
-        for claimId in c {
-          if let idx = claimIds.index(of: claimId) { claimIds.remove(at: idx) }
-        }
+        for claimId in c { ids.remove(claimId) }
       }
     }
   }
-  return claimIds[0]
+  return ids.removeFirst()
 }
 
 var claims: [String] = [];
@@ -41,5 +40,5 @@ for claim in claims {
   }
 }
 
-let claimId = getSingleClaimId(patches: patches, claimIds: &claimIds)
+let claimId = getSingleClaimId(patches: patches, claimIds: claimIds)
 print("\(claimId)")

@@ -1,7 +1,5 @@
 var boxIds: [String] = [];
-while let boxId = readLine() {
-  boxIds.append(boxId)
-}
+while let boxId = readLine() { boxIds.append(boxId) }
 
 let targetFreqs = [2, 3]
 var count: [Int: Int] = [:]
@@ -11,15 +9,12 @@ for boxId in boxIds {
   var charFreqs: [Character: Int] = [:]
 
 #if swift(>=4.0)
-  let indices = boxId.indices
+  let idChars = boxId
 #elseif swift(>=3.0)
-  let indices = boxId.characters.indices
+  let idChars = boxId.characters
 #endif
 
-  for i in indices {
-    let c: Character = boxId[i]
-    charFreqs[c] = (charFreqs[c] ?? 0) + 1
-  }
+  for c in idChars { charFreqs[c] = (charFreqs[c] ?? 0) + 1 }
 
   var found: [Int: Bool] = [:]
   for f in targetFreqs { found[f] = false }

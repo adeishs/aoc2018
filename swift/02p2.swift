@@ -15,7 +15,7 @@ func getCommonCharStr(boxId1: String, boxId2: String) -> String {
   return ""
 }
 
-func getCorrectBoxCommonCharStr(_: [String]) -> String {
+func getCorrectBoxCommonCharStr(boxIds: [String]) -> String {
   let boxCount = boxIds.count
   let jMax = boxCount - 1
   let iMax = jMax - 1
@@ -36,5 +36,5 @@ while let boxId = readLine() {
   boxIds.append(boxId)
 }
 
-let str = getCorrectBoxCommonCharStr(boxIds)
+let str = getCorrectBoxCommonCharStr(boxIds: boxIds)
 print("\(str)")

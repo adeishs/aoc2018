@@ -2,10 +2,10 @@ import Foundation
 
 func getSingleClaimId (patches: [[[Int]]], claimIds: [Int]) -> Int {
   var ids = Set(claimIds)
-  for row in patches {
-    for c in row {
-      if c.count > 1 {
-        for claimId in c { ids.remove(claimId) }
+  for cols in patches {
+    for cellIds in cols {
+      if cellIds.count > 1 {
+        for claimId in cellIds { ids.remove(claimId) }
       }
     }
   }
@@ -15,9 +15,9 @@ func getSingleClaimId (patches: [[[Int]]], claimIds: [Int]) -> Int {
 var claims: [String] = [];
 while let claim = readLine() { claims.append(claim) }
 
-let ints: [Int] = []
-var patches = Array(repeating: Array(repeating: ints, count: 1000),
-                    count: 1000)
+let squareWidth = 1000
+var patches = Array(repeating: Array(repeating: [Int]([]), count: squareWidth),
+                    count: squareWidth)
 var claimIds: [Int] = []
 for claim in claims {
   var claimEls = claim.components(separatedBy: " @ ")

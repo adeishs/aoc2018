@@ -1,7 +1,7 @@
 import Foundation
 
 struct LogEvent {
-  var duration = 0
+  var minsFromMidnight = 0
   var desc = ""
 }
 
@@ -33,28 +33,65 @@ for e in entries {
   let date = timestampEls.removeFirst()
   let time = timestampEls.removeFirst()
 
-  let event = LogEvent(duration: getMinsFromMidnight(time), desc: eventDesc)
+  let event = LogEvent(minsFromMidnight: getMinsFromMidnight(time),
+                       desc: eventDesc)
   if dailyEntries[date] == nil { dailyEntries[date] = [] } 
   dailyEntries[date]!.append(event)
 }
 
-// structure: sleepNumOfMinutes[guardId]
-var currentGuardId = 0
-var guardSleeping = false
-var prevMin = 0
+var guardId = 0
 var currMin = 0
-var prevDate = ""
-var currDate = ""
-var numOfDaysFromEpoch = 0
+// structure: sleepMinFreq[guardId][minute] = freq
+var sleepMinFreq: [Int: [Int]] = [:]
+var sleepMins: [Int: Int] = [:]
+let guardSep = CharacterSet.init(charactersIn: " #")
 for currDate in Array(dailyEntries.keys).sorted() {
+  var sleepStartMin = 0
+
   for event in dailyEntries[currDate] ?? [] {
-    if currentGuardId == 0 {
+    currMin = event.minsFromMidnight
+
+    var els = event.desc.components(separatedBy: " ")
+    let eventType = els.removeFirst()
+    if eventType == "Guard" || guardId == 0 {
+      // format: ‘Guard #<ID> begins shift’
+      var els = els[0].components(separatedBy: guardSep)
+      els.removeFirst()
+      guardId = Int(els.removeFirst()) ?? 0
+    } else if eventType == "wakes" {
+      sleepMins[guardId] = (sleepMins[guardId] ?? 0) + currMin - sleepStartMin
+      if sleepMinFreq[guardId] == nil {
+        sleepMinFreq[guardId] = [Int]([])
+        for _ in 0..<60 { sleepMinFreq[guardId]!.append(0) }
+      }
+      for m in sleepStartMin..<currMin {
+        sleepMinFreq[guardId]![m] += 1
+      }
+    } else if eventType == "falls" {
+      sleepStartMin = currMin
     }
-    print("\(currDate): \(event.duration), \(event.desc)")
-
   }
-
-  // next day?
-  if (prevDate != "" && currDate != prevDate) { numOfDaysFromEpoch += 1 }
-  prevDate = currDate
 }
+
+// find guard most asleep
+var targetGuardId = 0
+var maxMins = 0
+for (guardId, mins) in sleepMins {
+  if maxMins < mins {
+    maxMins = mins
+    targetGuardId = guardId
+  }
+}
+
+// find the minute the guard sleeps most
+var targetMinute = 0
+var maxFreq = 0
+for minute in 0..<60 {
+  let freq = sleepMinFreq[targetGuardId]![minute]
+  if freq > maxFreq {
+    maxFreq = freq
+    targetMinute = minute
+  }
+}
+let m = targetGuardId * targetMinute
+print("\(m)")
